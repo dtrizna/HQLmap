@@ -55,9 +55,21 @@ def send_HTTP_request(url, params):
 
 def extract_params(var):
     params = {}
-    pairs = var.split('&')
+    if '&' in var:
+        pairs = var.split('&')
+        delim = '='
+    # for JSON data
+    elif '{' in var:
+        pairs = var.split(',')
+        for i,pair in enumerate(pairs):
+            pairs[i] = pair.replace('{','').replace('}','').replace('"','').replace("'",'')
+        delim = ':'
+    else:
+        pairs = var
+        delim = '='
+
     for pair in pairs:
-        key, value = pair.split('=')[0], pair.split('=')[1]
+        key, value = pair.split(delim)[0], pair.split(delim)[1]
         params[key] = value
     return params
 
